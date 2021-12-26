@@ -20,8 +20,7 @@ namespace Test_Sniffeur {
 
         ICaptureDevice device;
         List<byte> inventaireBanque = new List<byte> { };
-        //int numPacket = 1;
-        Thread _th;
+        Thread _th = null;
         bool getBanque = false;
 
         public Form1() {
@@ -38,43 +37,75 @@ namespace Test_Sniffeur {
                 }
             }
 
-            // Pour le moment on test donc osef des respects des threads
-            Control.CheckForIllegalCrossThreadCalls = false;
-            // La création de mon thread
             _th = new Thread(bcl);
             _th.Start();
         }
 
-        // La boucle de notre thread
-        void bcl() {
-            CaptureDeviceList devices = CaptureDeviceList.Instance; // On récupère les connexions actives
-            foreach (LibPcapLiveDevice _devs in devices) if (_devs.Interface.FriendlyName == "Ethernet") device = _devs; // On cherche la connexion Ethernet
-            device.OnPacketArrival += new PacketArrivalEventHandler(device_OnPacketArrival); // On ajoute un évènement quand un packet est reçu
+        public void listBegin(ListView lv) {
+            if (lv.InvokeRequired) {
+                MethodInvoker invoker = delegate { listBegin(lv); };
+                lv.Invoke(invoker);
+                return;
+            }
 
-            device.Open(DeviceModes.MaxResponsiveness); // On ouvre la lecture de nos packets
-            // dst host 172.65.226.26 or src host 172.65.226.26
-            device.Filter = "src host 172.65.226.26"; // On filtre uniquement les packets venant du serveur Boune
-            device.Capture(); // On lance la capture des packets
+            lv.BeginUpdate();
         }
 
-        // Quand un packet est reçu ...
-        void device_OnPacketArrival(object sender, PacketCapture packet) {
-            // On récupère le packet et on parse la partie inutile (informations d'envoie)
-            byte[] getPacket = parsePacket(Packet.ParsePacket(packet.GetPacket().LinkLayerType, packet.GetPacket().Data).Bytes);
-            //numPacket++;
-            if (getPacket.Length > 0) {
-                // Si le packet commence par 49 6D
-                if (getPacket[0] == 0x49 && getPacket[1] == 0x6D) {
-                    inventaireBanque = new List<byte> { }; // On vide la variable banque
-                    banque = new List<items> { };
-                    listView1.Items.Clear();
-                    inventaireBanque.AddRange(getPacket); // On ajout les bytes dans la variable banque
-                    getBanque = true; // Les packets suivant seront ceux de la banque ...
-                } else if (getBanque) {
-                    inventaireBanque.AddRange(getPacket); // On ajoute le packet
-                    int lastByte = getPacket.Length; // On récupère sa taille
+        public void listEnd(ListView lv) {
+            if (lv.InvokeRequired) {
+                MethodInvoker invoker = delegate { listEnd(lv); };
+                lv.Invoke(invoker);
+                return;
+            }
 
-                    // Si les 3 derniers bytes sont 44 56 00 on arrête la récupération
+            lv.EndUpdate();
+        }
+
+        public void addItem(ListView lv, ListViewItem lvi) {
+            if (lv.InvokeRequired) {
+                MethodInvoker invoker = delegate { addItem(lv, lvi); };
+                lv.Invoke(invoker);
+                return;
+            }
+
+            lv.Items.Add(lvi);
+        }
+
+        public void clearLv(ListView lv) {
+            if (lv.InvokeRequired) {
+                MethodInvoker invoker = delegate { clearLv(lv); };
+                lv.Invoke(invoker);
+                return;
+            }
+
+            lv.Items.Clear();
+        }
+
+        void bcl() {
+            CaptureDeviceList devices = CaptureDeviceList.Instance;
+            foreach (LibPcapLiveDevice _devs in devices) if (_devs.Interface.FriendlyName == "Ethernet") device = _devs;
+            device.OnPacketArrival += new PacketArrivalEventHandler(device_OnPacketArrival);
+
+            device.Open(DeviceModes.MaxResponsiveness);
+            // dst host 172.65.226.26 or src host 172.65.226.26
+            device.Filter = "src host 172.65.226.26";
+            device.Capture();
+        }
+
+        void device_OnPacketArrival(object sender, PacketCapture packet) {
+            byte[] getPacket = parsePacket(Packet.ParsePacket(packet.GetPacket().LinkLayerType, packet.GetPacket().Data).Bytes);
+
+            if (getPacket.Length > 0) {
+                if (getPacket[0] == 0x49 && getPacket[1] == 0x6D) {
+                    inventaireBanque = new List<byte> { };
+                    banque = new List<items> { };
+                    clearLv(listView1);
+                    inventaireBanque.AddRange(getPacket);
+                    getBanque = true;
+                } else if (getBanque) {
+                    inventaireBanque.AddRange(getPacket);
+                    int lastByte = getPacket.Length;
+
                     if (getPacket[lastByte - 3] == 0x44 && getPacket[lastByte - 2] == 0x56 && getPacket[lastByte - 1] == 0x00) {
                         getBanque = false;
                         parseBanque(inventaireBanque.ToArray());
@@ -93,7 +124,7 @@ namespace Test_Sniffeur {
 
             string[] trad = Encoding.UTF8.GetString(newBanque, 0, newBanque.Length).Split(new string[] { ";" }, StringSplitOptions.None);
 
-            listView1.BeginUpdate();
+            listBegin(listView1);
             foreach (string _ress in trad) {
                 if (_ress != "") {
                     int id = int.Parse(_ress.Split(new string[] { "~" }, StringSplitOptions.None)[1], System.Globalization.NumberStyles.HexNumber);
@@ -106,28 +137,25 @@ namespace Test_Sniffeur {
                     LVI.SubItems.Add(_getItem.qty.ToString());
                     LVI.SubItems.Add(_getItem.description);
 
-                    listView1.Items.Add(LVI);
+                    addItem(listView1, LVI);
                 }
             }
-            listView1.EndUpdate();
-
-            string test = "stop";
+            listEnd(listView1);
         }
 
-        // Pour retirer les infos de liaison avec le serveur
         byte[] parsePacket(byte[] packet) {
-            int retraitInfos = 54; // Nombre de bytes inutiles (fixe ?)
-            //if (packet.Length <= retraitInfos) return new byte[] { }; // Si on est négatif ou vide on renvoie rien
-            byte[] result = new byte[packet.Length - retraitInfos]; // On prépare le nouveau tableau pour récupérer l'échange
-            Array.Copy(packet, retraitInfos, result, 0, packet.Length - retraitInfos); // on copie les informations reçu
-            return result; // et on retourne le tableau
+            int retraitInfos = 54;
+            byte[] result = new byte[packet.Length - retraitInfos];
+            Array.Copy(packet, retraitInfos, result, 0, packet.Length - retraitInfos);
+            return result;
         }
 
-        // Quand on ferme le logiciel
         private void Form1_FormClosing(object sender, FormClosingEventArgs e) {
-            _th.Abort(); // On coupe le thread
-            device.StopCapture(); // On coupe la capture
-            device.Close(); // On ferme la capture
+            try {
+                device.StopCapture();
+                device.Close();
+                _th.Abort();
+            } catch { }
         }
 
         void addCrafts() {
@@ -2375,8 +2403,9 @@ namespace Test_Sniffeur {
         }
 
         List<crafts> searchCrafts() {
-            listView2.Items.Clear();
+            clearLv(listView2);
             List<crafts> canCraft = new List<crafts> { };
+            listBegin(listView2);
             foreach (crafts item in allCrafts) {
                 if (item.items.Count == 0) break;
                 List<items> itemsCrafts = new List<items>();
@@ -2410,10 +2439,11 @@ namespace Test_Sniffeur {
                         int _qty = _itB.qty / _ress[1];
                         if (max > _qty) max = _qty;
                     }
-                    listView2.Items.Add(LVI);
                     LVI.SubItems[2].Text = max.ToString();
+                    addItem(listView2, LVI);
                 }
             }
+            listEnd(listView2);
             return canCraft;
         }
 
@@ -2431,6 +2461,33 @@ namespace Test_Sniffeur {
             return -1;
         }
 
+        private void button1_Click(object sender, EventArgs e) {
+            string saveStr = "";
+            if (listView2.Items.Count > 0) {
+
+                SaveFileDialog SFD = new SaveFileDialog();
+                SFD.Title = "Sauvegarder sa liste de craft";
+                SFD.DefaultExt = "txt";
+                SFD.Filter = "txt files (*.txt)|*.txt";
+                SFD.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                SFD.FileName = "liste crafts.txt";
+
+                if (SFD.ShowDialog() != DialogResult.OK) return;
+
+                foreach (ListViewItem item in listView2.Items) {
+                    saveStr += item.SubItems[2].Text + "x" + item.SubItems[1].Text + " : " + item.SubItems[3].Text;
+                    for (int i = 4; i < item.SubItems.Count; i++) {
+                        string see = item.SubItems[i].Text;
+                        if (see != "") {
+                            saveStr += ", " + see;
+                        }
+                    }
+                    saveStr += "\n";
+                }
+
+                File.WriteAllText(SFD.FileName, saveStr);
+            }
+        }
     }
 
     public class items {
