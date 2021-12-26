@@ -78,6 +78,7 @@ namespace Test_Sniffeur {
                     if (getPacket[lastByte - 3] == 0x44 && getPacket[lastByte - 2] == 0x56 && getPacket[lastByte - 1] == 0x00) {
                         getBanque = false;
                         parseBanque(inventaireBanque.ToArray());
+                        searchCrafts();
                     }
                 }
             }
@@ -2373,6 +2374,49 @@ namespace Test_Sniffeur {
             allCrafts.Add(new crafts(11744, new int[] { 11727, 1 }));
         }
 
+        List<crafts> searchCrafts() {
+            listView2.Items.Clear();
+            List<crafts> canCraft = new List<crafts> { };
+            foreach (crafts item in allCrafts) {
+                if (item.items.Count == 0) break;
+                List<items> itemsCrafts = new List<items>();
+                foreach (int[] _int in item.items) {
+                    items original = allItems.Find(x => x.id == _int[0]);
+                    items getIt = new items(original.id, original.nom, original.description);
+                    getIt.qty = _int[1];
+                    itemsCrafts.Add(getIt);
+                }
+
+                bool craftable = true;
+                foreach (items _itCraft in itemsCrafts) {
+                    if (banque.Find(x => x.id == _itCraft.id && x.qty >= _itCraft.qty) == null) {
+                        craftable = false;
+                        break;
+                    }
+                }
+
+                if (craftable) {
+                    canCraft.Add(item);
+                    items _it = allItems.Find(x => x.id == item.resultat);
+                    ListViewItem LVI = new ListViewItem(_it.id.ToString());
+                    LVI.SubItems.Add(_it.nom);
+                    LVI.SubItems.Add("");
+
+                    int max = 999999;
+                    foreach (int[] _ress in item.items) {
+                        items _itN = allItems.Find(x => x.id == _ress[0]);
+                        items _itB = banque.Find(x => x.id == _ress[0]);
+                        LVI.SubItems.Add(_ress[1] + "x" + _itN.nom);
+                        int _qty = _itB.qty / _ress[1];
+                        if (max > _qty) max = _qty;
+                    }
+                    listView2.Items.Add(LVI);
+                    LVI.SubItems[2].Text = max.ToString();
+                }
+            }
+            return canCraft;
+        }
+
         int search(byte[] src, byte[] pattern) {
             int maxFirstCharSlot = src.Length - pattern.Length + 1;
             for (int i = 0; i < maxFirstCharSlot; i++) {
@@ -2386,6 +2430,7 @@ namespace Test_Sniffeur {
             }
             return -1;
         }
+
     }
 
     public class items {
