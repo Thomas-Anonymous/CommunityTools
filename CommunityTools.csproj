@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <RootNamespace>CommunityTools</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon />
+    <StartupObject>Test_Sniffeur.Program</StartupObject>
+    <AssemblyName>CommunityTools</AssemblyName>
+    <Description>Utilitaire pour Dofus Rétro complètement transparent sans bannissement possible.</Description>
+    <Copyright>Thomas-Anonymous</Copyright>
+    <NeutralLanguage>fr-FR</NeutralLanguage>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <ErrorReport>none</ErrorReport>
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="listItems.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PacketDotNet" Version="1.4.0" />
+    <PackageReference Include="SharpPcap" Version="6.1.0" />
+  </ItemGroup>
+
+</Project>
