@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>CommunityTools</RootNamespace>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon />
-    <StartupObject>Test_Sniffeur.Program</StartupObject>
+    <StartupObject>CommunityTools.Program</StartupObject>
     <AssemblyName>CommunityTools</AssemblyName>
     <Description>Utilitaire pour Dofus Rétro complètement transparent sans bannissement possible.</Description>
     <Copyright>Thomas-Anonymous</Copyright>
@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="PacketDotNet" Version="1.4.0" />
-    <PackageReference Include="SharpPcap" Version="6.1.0" />
+    <PackageReference Include="PacketDotNet" Version="1.4.6" />
+    <PackageReference Include="SharpPcap" Version="6.2.2" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.116" />
   </ItemGroup>
 
 </Project>

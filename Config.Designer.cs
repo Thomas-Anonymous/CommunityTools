@@ -1,5 +1,5 @@
 ﻿
-namespace Test_Sniffeur {
+namespace CommunityTools {
     partial class ConfigSniff {
         /// <summary>
         /// Required designer variable.
@@ -24,13 +24,18 @@ namespace Test_Sniffeur {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnValider = new System.Windows.Forms.Button();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.progressFiles = new System.Windows.Forms.ProgressBar();
+            this.tip = new System.Windows.Forms.ToolTip(this.components);
+            this.btnMajLang = new System.Windows.Forms.Button();
+            this.btnMajSource = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBox1
@@ -56,17 +61,17 @@ namespace Test_Sniffeur {
             this.label1.TabIndex = 1;
             this.label1.Text = "Connexion à écouter:";
             // 
-            // button1
+            // btnValider
             // 
-            this.button1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.button1.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.button1.Location = new System.Drawing.Point(215, 138);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(105, 35);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Valider";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnValider.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnValider.Font = new System.Drawing.Font("Segoe UI", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.btnValider.Location = new System.Drawing.Point(226, 141);
+            this.btnValider.Name = "btnValider";
+            this.btnValider.Size = new System.Drawing.Size(105, 35);
+            this.btnValider.TabIndex = 2;
+            this.btnValider.Text = "Valider";
+            this.btnValider.UseVisualStyleBackColor = true;
+            this.btnValider.Click += new System.EventHandler(this.button1_Click);
             // 
             // comboBox2
             // 
@@ -79,7 +84,6 @@ namespace Test_Sniffeur {
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(254, 23);
             this.comboBox2.TabIndex = 3;
-            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.comboBox2_SelectedIndexChanged);
             // 
             // radioButton1
             // 
@@ -93,7 +97,6 @@ namespace Test_Sniffeur {
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Choix du serveur :";
             this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // radioButton2
             // 
@@ -115,16 +118,56 @@ namespace Test_Sniffeur {
             this.textBox1.Size = new System.Drawing.Size(223, 23);
             this.textBox1.TabIndex = 6;
             // 
+            // progressFiles
+            // 
+            this.progressFiles.Location = new System.Drawing.Point(6, 185);
+            this.progressFiles.Name = "progressFiles";
+            this.progressFiles.Size = new System.Drawing.Size(464, 31);
+            this.progressFiles.TabIndex = 8;
+            this.progressFiles.Visible = false;
+            // 
+            // tip
+            // 
+            this.tip.IsBalloon = true;
+            this.tip.ShowAlways = true;
+            this.tip.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.tip.ToolTipTitle = "Avancement";
+            // 
+            // btnMajLang
+            // 
+            this.btnMajLang.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnMajLang.Location = new System.Drawing.Point(477, 197);
+            this.btnMajLang.Name = "btnMajLang";
+            this.btnMajLang.Size = new System.Drawing.Size(52, 19);
+            this.btnMajLang.TabIndex = 7;
+            this.btnMajLang.Text = "MAJ LANG";
+            this.btnMajLang.UseVisualStyleBackColor = true;
+            this.btnMajLang.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // btnMajSource
+            // 
+            this.btnMajSource.Font = new System.Drawing.Font("Segoe UI", 6F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnMajSource.Location = new System.Drawing.Point(472, 178);
+            this.btnMajSource.Name = "btnMajSource";
+            this.btnMajSource.Size = new System.Drawing.Size(60, 19);
+            this.btnMajSource.TabIndex = 9;
+            this.btnMajSource.Text = "MAJ SOURCE";
+            this.btnMajSource.UseVisualStyleBackColor = true;
+            this.btnMajSource.Click += new System.EventHandler(this.button3_Click);
+            // 
             // ConfigSniff
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(534, 195);
+            this.ClientSize = new System.Drawing.Size(534, 222);
+            this.Controls.Add(this.btnMajSource);
+            this.Controls.Add(this.progressFiles);
+            this.Controls.Add(this.btnMajLang);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.radioButton2);
             this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.comboBox2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnValider);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -142,10 +185,14 @@ namespace Test_Sniffeur {
 
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnValider;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ProgressBar progressFiles;
+        private System.Windows.Forms.ToolTip tip;
+        private System.Windows.Forms.Button btnMajLang;
+        private System.Windows.Forms.Button btnMajSource;
     }
 }

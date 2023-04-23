@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS8632: L'annotation pour les types référence Nullable doit être utilisée uniquement dans le code au sein d'un contexte d'annotations '#nullable'.
+dotnet_diagnostic.CS8632.severity = silent
